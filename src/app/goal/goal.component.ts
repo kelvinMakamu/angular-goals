@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { AlertService } from './alert.service';
+import { QuoteService } from '../quote/quote.service';
+import { GoalServiceService } from './goal-service.service';
 import { Goal } from '../goal';
+import { Quote } from '../quote/quote';
 
 @Component({
   selector: 'app-goal',
@@ -7,14 +11,13 @@ import { Goal } from '../goal';
   styleUrls: ['./goal.component.css']
 })
 export class GoalComponent implements OnInit {
+  goals: Goal[];
+  quote: Quote;
 
-  goals: Goal[]= [
-    new Goal(1, "Watching",'1: Find an online version and watch merlin find his son',new Date(2020,10,25)),
-    new Goal(21, "Walking",'21: Find an online version and watch merlin find his son',new Date(2001,3,14)),
-    new Goal(31, "Washing", '31: Find an online version and watch merlin find his son',new Date(2002,3,14)),
-    new Goal(41, "Climbing",'41: Find an online version and watch merlin find his son',new Date(2003,3,14)),
-    new Goal(51, "Clodering",'51: Find an online version and watch merlin find his son',new Date(2004,3,14))
-  ];
+  constructor(private goalService: GoalServiceService, private alertService: AlertService,
+    private quoteService: QuoteService){
+    this.goals = this.goalService.getGoals();
+  }
 
   toggleDetails(index: number){
     this.goals[index].showDescription = !this.goals[index].showDescription;
@@ -24,22 +27,23 @@ export class GoalComponent implements OnInit {
     let goalLength = this.goals.length;
     goal.id=goalLength++;
     goal.completeDate= new Date(goal.completeDate);
-    this.goals.push(goal);
+    this.goals.unshift(goal);
+    this.alertService.displayAlertNotification(`The goal : ${goal.name} has been added successfully!!`);
   }
 
-  deleteGoal(isComplete, index){
+  deleteGoal(isComplete:boolean, index: number): void{
     if(isComplete){
       let toDelete = confirm(`Are you sure you want to delete ${this.goals[index].name}?`);
       if(toDelete){
         this.goals.splice(index,1);
+        this.alertService.displayAlertNotification(`The goal: ${this.goals[index].name} has been deleted successfully!!`);
       }
     }
   }
 
-  constructor(){
-  }
-
-  ngOnInit(): void {
+  ngOnInit(){
+    this.quoteService.getRandomQuote();
+    this.quote = this.quoteService.quote;
   }
 
 }
