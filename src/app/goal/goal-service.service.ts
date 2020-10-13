@@ -6,11 +6,18 @@ import { goals } from '../goalList';
 })
 export class GoalServiceService {
 
-  constructor() { }
-
   getGoals(){
     return goals;
   }
 
-  
+  getGoal(id:any){
+   for(let goal of goals){
+     if(goal.id == id){
+       return goal;
+     }
+   } 
+  }
+
+  constructor() { }
+
 }
